@@ -3,33 +3,222 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plus 60s Event Calculator</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600;700&family=Libre+Baskerville:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <title>Event Payout Calculator</title>
+  <style>
+    :root {
+      --page-bg: #ffffe5;
+      --card-bg: #fffdf3;
+      --card-border: #e1dac3;
+      --text: #162033;
+      --muted: #5f6c80;
+      --accent: #bf4b31;
+      --panel-dark: #142033;
+      --shadow: 0 18px 40px rgba(36, 47, 64, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: var(--page-bg);
+    }
+
+    .page {
+      width: min(980px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 48px 0 56px;
+    }
+
+    .hero {
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 12px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 16px;
+      font-size: clamp(40px, 5vw, 64px);
+      line-height: 1.02;
+      color: var(--accent);
+    }
+
+    .hero-copy {
+      max-width: 700px;
+      margin-bottom: 0;
+      font-size: 18px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .calculator {
+      padding: 24px;
+      border: 1px solid var(--card-border);
+      border-radius: 28px;
+      background: var(--card-bg);
+      box-shadow: var(--shadow);
+    }
+
+    .calculator-header p {
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .field {
+      margin-top: 24px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .input-shell {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 16px;
+      border: 1px solid #d8d0bd;
+      border-radius: 18px;
+      background: #ffffff;
+    }
+
+    .currency {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    input {
+      width: 100%;
+      padding: 16px 0;
+      border: 0;
+      outline: 0;
+      font: inherit;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text);
+      background: transparent;
+    }
+
+    .results {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .result {
+      padding: 20px;
+      border: 1px solid #e6dfce;
+      border-radius: 22px;
+      background: #ffffff;
+    }
+
+    .result.featured {
+      border-color: #e3b7ad;
+      background: #fff5f1;
+    }
+
+    .result-label {
+      display: block;
+      margin-bottom: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .result-value {
+      display: block;
+      font-size: clamp(30px, 4vw, 44px);
+      line-height: 1;
+      font-weight: 700;
+    }
+
+    .result-note {
+      margin: 12px 0 0;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .formula {
+      margin-top: 24px;
+      padding: 20px;
+      border-radius: 22px;
+      background: var(--panel-dark);
+      color: #f7f3ea;
+    }
+
+    .formula p {
+      margin-bottom: 0;
+      line-height: 1.65;
+      color: rgba(247, 243, 234, 0.86);
+    }
+
+    @media (max-width: 820px) {
+      .results,
+      .image-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        width: min(100% - 16px, 980px);
+        padding: 24px 0 32px;
+      }
+
+      .calculator {
+        padding: 18px;
+      }
+
+      .results,
+      .image-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <main class="app-shell">
+  <main class="page">
     <section class="hero">
-      <p class="eyebrow">Plus 60s Event Pricing</p>
+      <p class="eyebrow">Event Pricing Calculator</p>
       <h1>Let Me Do The Math!</h1>
       <p class="hero-copy">
         Enter the event cost and the calculator works backward from the processing fee of
-        <strong>2.99% + $0.30</strong> to show the final member price, the fee amount, and the amount the club receives.
+        <strong>2.99% + $0.30</strong> to show the final member price, the fee amount, and the amount the club will get back from Stripe.
       </p>
     </section>
 
-    <section class="calculator-card" aria-labelledby="calculator-title">
-      <div class="card-header">
+    <section class="calculator" aria-labelledby="calculator-title">
+      <div class="calculator-header">
         <h2 id="calculator-title">Event Calculator</h2>
-        <p>The charge amount is always rounded up to the next $0.10.</p>
+        <p>Rounded up to the next $0.10.</p>
       </div>
 
-      <label class="input-group" for="event-cost">
-        <span>Event cost</span>
-        <div class="currency-input">
-          <span class="currency-symbol">$</span>
+      <div class="field">
+        <label for="event-cost">Event cost</label>
+        <div class="input-shell">
+          <span class="currency">$</span>
           <input
             id="event-cost"
             name="event-cost"
@@ -41,37 +230,101 @@
             value="125.00"
           >
         </div>
-      </label>
+      </div>
 
-      <div class="results-grid" aria-live="polite">
-        <article class="result-card accent">
+      <div class="results" aria-live="polite">
+        <article class="result featured">
           <span class="result-label">Amount to charge</span>
           <strong class="result-value" id="charge-amount">$0.00</strong>
-          <p class="result-note">This is the member-facing price.</p>
+          <p class="result-note">This is what the member pays.</p>
         </article>
 
-        <article class="result-card">
+        <article class="result">
           <span class="result-label">Processing fees</span>
           <strong class="result-value" id="fee-amount">$0.00</strong>
-          <p class="result-note">Calculated as 2.99% of the charge plus $0.30.</p>
+          <p class="result-note">2.99% of the charge plus $0.30.</p>
         </article>
 
-        <article class="result-card">
-          <span class="result-label">Amount club receives</span>
+        <article class="result">
+          <span class="result-label">Amount club gets from Stripe</span>
           <strong class="result-value" id="keep-amount">$0.00</strong>
-          <p class="result-note">This will always be at least the original event cost.</p>
+          <p class="result-note">This will always be at least the event cost.</p>
         </article>
       </div>
 
-      <div class="formula-panel">
+      <div class="formula">
         <h3>How it works</h3>
         <p id="formula-breakdown">
-          For an event cost of $0.00, the calculator solves the formula, rounds the charge up to the next $0.10, and subtracts the fees from the final charge.
+          For an event cost of $0.00, the calculator solves the formula, rounds up to the next $0.10, and subtracts the fees from the final charge.
         </p>
+      </div>
+    </section>
+
+    <section class="adventure-strip" aria-label="Adventure images">
+      <h2>Have A Fun Event! Life's Out There! Live It!</h2>
+      <div class="image-row">
+        <div class="image-card">
+          <img src="BikingLarge.png" alt="Cyclist riding through a forest">
+        </div>
+        <div class="image-card">
+          <img src="KayakingLarge.png" alt="Kayaker on a lake">
+        </div>
+        <div class="image-card">
+          <img src="HikingLarge.png" alt="Hiker standing on a cliff at sunset">
+        </div>
+        <div class="image-card">
+          <img src="CampingLarge.png" alt="Tent and campfire under the night sky">
+        </div>
       </div>
     </section>
   </main>
 
-  <script src="script.js"></script>
+  <script>
+    const eventCostInput = document.getElementById("event-cost");
+    const chargeAmount = document.getElementById("charge-amount");
+    const feeAmount = document.getElementById("fee-amount");
+    const keepAmount = document.getElementById("keep-amount");
+    const formulaBreakdown = document.getElementById("formula-breakdown");
+
+    const PERCENT_FEE = 0.0299;
+    const FIXED_FEE = 0.30;
+
+    function formatCurrency(value) {
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD"
+      }).format(value);
+    }
+
+    function roundToCents(value) {
+      return Math.round((value + Number.EPSILON) * 100) / 100;
+    }
+
+    function roundUpToNearestDime(value) {
+      return Math.ceil((value - Number.EPSILON) * 10) / 10;
+    }
+
+    function calculate() {
+      const eventCost = Number.parseFloat(eventCostInput.value);
+      const safeCost = Number.isFinite(eventCost) && eventCost >= 0 ? eventCost : 0;
+
+      const exactCharge = (safeCost + FIXED_FEE) / (1 - PERCENT_FEE);
+      const charge = roundUpToNearestDime(exactCharge);
+      const fees = roundToCents(charge * PERCENT_FEE + FIXED_FEE);
+      const keep = roundToCents(charge - fees);
+
+      chargeAmount.textContent = formatCurrency(charge);
+      feeAmount.textContent = formatCurrency(fees);
+      keepAmount.textContent = formatCurrency(keep);
+
+      formulaBreakdown.textContent =
+        `${formatCurrency(safeCost)} + ${formatCurrency(FIXED_FEE)} divided by 0.9701 gives an exact charge before rounding. ` +
+        `That amount is always rounded up to the next $0.10 for a final charge of ${formatCurrency(charge)}. ` +
+        `The fee on that charge is ${formatCurrency(fees)}, leaving ${formatCurrency(keep)}.`;
+    }
+
+    eventCostInput.addEventListener("input", calculate);
+    calculate();
+  </script>
 </body>
 </html>
