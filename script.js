@@ -38,7 +38,7 @@ function calculate() {
   formulaBreakdown.textContent =
     `${formatCurrency(safeCost)} + ${formatCurrency(FIXED_FEE)} divided by 0.9701 gives an exact charge before rounding. ` +
     `That amount is always rounded up to the next $0.10 for a final charge of ${formatCurrency(charge)}. ` +
-    `The processing fee on that charge is ${formatCurrency(fees)}, leaving ${formatCurrency(keep)} for the club.`;
+    `The fee on that charge is ${formatCurrency(fees)}, leaving ${formatCurrency(keep)}.`;
 }
 
 eventCostInput.addEventListener("input", calculate);
